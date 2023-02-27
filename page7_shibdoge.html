@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    		<meta charset="UTF-8">
+    		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+		<link rel="stylesheet" href="style6.css" />
+    		<title>Page 7 SHIB/DOGE</title>
+	</head>
+	<body>
+
+<div id="container" class="container">
+
+	<p id="p1" class="p">
+
+	<input id="inp1" type="text" value="SHIBDOGE" />
+	<button id="btn1" onclick="startClicker()">START Clicker</button>
+	<button id="btn2" onclick="stopClicker()">STOP Clicker</button> 
+
+	</p>
+
+	<p id="p2" class="p">p2 element</p>
+	<p id="p3" class="p">p3 element</p>
+	<p id="p4" class="p">p4 element</p>
+	
+		<p id="p41" class="p">p41 element</p> 
+		<p id="p42" class="p">p42 element</p> 
+		<p id="p43" class="p">p43 element</p>
+
+	<p id="p5" class="p">p5 element</p>
+	<p id="p6" class="p">p6 element</p>
+	<p id="p7" class="p">p7 element</p> 
+	<p id="p8" class="p">p8 element</p> 
+</div>
+		
+<script>
+
+
+	var messageRequest = () => {
+
+		var p2 = document.getElementById("p2")
+
+		if(messageRequest.state.price > messageRequest.state.movingAveragePrice) {
+
+			p2.style.color = "green"
+		}
+
+		else if(messageRequest.state.price < messageRequest.state.movingAveragePrice) {
+
+			p2.style.color = "red"
+		}
+		
+
+		return (p2.innerHTML = 
+					"<p>" +"Pair: " +messageRequest.state.pair +"</p>" +
+					"<p>" +" Price: " +parseFloat(messageRequest.state.price).toFixed(7) +"</p>" +
+					"<p>" +" Last Price: " +parseFloat(messageRequest.state.lastPrice).toFixed(7) +"</p>" +
+					"<p>" +"Moving Average: " +parseFloat(messageRequest.state.movingAveragePrice).toFixed(7) +"</p>")
+	}
+
+	messageRequest.state = {
+
+		pair: "SHIBDOGE",
+		price: 0,
+		lastPrice: 0,
+		buyPrice: 0,
+		sellPrice: 0,
+		tokenQuantity: 0.00000000,
+		buyQuantity: 0,
+		sellQuantity: 0,
+		movingAveragePrice: 0,
+		tokenBalance: 3160322.35,
+		coinBalance: 1618.29282808,
+		buyTotal: 0.00,
+		sellTotal: 0.00,
+		upCount: 0,
+		downCount: 0,
+		movingAverageCount: 0,
+		movingAverageTemp: 0,
+		marginRate: 0.25/100,
+	}
+
+	const movingAverage = (price) => {
+				
+		messageRequest.state.movingAverageCount++
+		
+		messageRequest.state.movingAverageTemp += parseFloat(price)
+		messageRequest.state.movingAveragePrice = parseFloat(messageRequest.state.movingAverageTemp)/parseFloat(messageRequest.state.movingAverageCount)
+	}
+
+	const feeCost = (num) => {
+
+		return num*0.5/100
+	}
+
+	const margin = (num) => {
+
+		let temp = parseFloat(messageRequest.state.price*messageRequest.state.marginRate)
+		return temp
+		
+	}
+
+	const axiosGet = (pair) => {
+		
+		const print = () => {
+
+			console.log("Price: ", parseFloat(messageRequest.state.price).toFixed(7))
+			console.log("Buy price: ", parseFloat(messageRequest.state.buyPrice).toFixed(7))
+			console.log("Sell price: ", parseFloat(messageRequest.state.sellPrice).toFixed(7))	
+
+			console.log("Token Balance: ",parseFloat(messageRequest.state.tokenBalance).toFixed(7))
+			console.log("Coin Balance: ",parseFloat(messageRequest.state.coinBalance).toFixed(2))
+					
+			console.log("Sell total: ", messageRequest.state.sellTotal)
+			console.log("Buy total: ", messageRequest.state.buyTotal)
+
+			console.log("Buy quantity: ", parseFloat(messageRequest.state.buyQuantity).toFixed(2))
+			console.log("Sell quantity: ", parseFloat(messageRequest.state.sellQuantity).toFixed(2))
+
+			console.log("Up Count: ", messageRequest.state.upCount)
+			console.log("Down Count: ", messageRequest.state.downCount)
+
+			console.log("Token Quantity: ", parseFloat(messageRequest.state.tokenQuantity).toFixed(7))
+
+			console.log("Profit/Loss: ", parseFloat(parseFloat(messageRequest.state.coinBalance) 
+								- parseFloat(messageRequest.state.tokenBalance)
+								* parseFloat(messageRequest.state.price)).toFixed(2))
+
+			//console.log("\n")
+			
+			tokenBalance = parseFloat(messageRequest.state.tokenBalance).toFixed(8)
+			
+			document.getElementById("p5").innerHTML = ("Token Balance: " +parseFloat(messageRequest.state.tokenBalance).toFixed(0))
+			document.getElementById("p6").innerHTML = ("Coin Balance: " +parseFloat(messageRequest.state.coinBalance).toFixed(0))
+			document.getElementById("p8").innerHTML = ("Sell total: " +parseFloat(messageRequest.state.sellTotal).toFixed(0))
+			document.getElementById("p7").innerHTML = ("Buy total: " +parseFloat(messageRequest.state.buyTotal).toFixed(0))
+
+			document.getElementById("p42").innerHTML = ("Buy price: " +parseFloat(messageRequest.state.buyPrice).toFixed(8))
+			document.getElementById("p41").innerHTML = ("Sell price: " +parseFloat(messageRequest.state.sellPrice).toFixed(8))
+
+			//console.log("TOKEN: ", parseFloat(messageRequest.state.tokenBalance*messageRequest.state.price).toFixed8))
+			//console.log("COIN: ", parseFloat(messageRequest.state.coinBalance).toFixed(8))
+
+			let pl = parseFloat(messageRequest.state.coinBalance) - parseFloat(messageRequest.state.tokenBalance)*parseFloat(messageRequest.state.price) //+ parseFloat(messageRequest.state.tokenQuantity)*parseFloat(messageRequest.state.price)
+			document.getElementById("p43").innerHTML = "P/L: " +parseFloat(pl).toFixed(0)
+		}
+
+
+
+		const buyTokenFunc = () => {
+
+			if(messageRequest.state.price < messageRequest.state.buyPrice) {
+
+				if(parseFloat(messageRequest.state.coinBalance) > parseFloat(messageRequest.state.price)*parseFloat(messageRequest.state.buyTotal)) {
+
+						console.log("Buy order")
+
+						if(messageRequest.state.price > messageRequest.state.sellPrice) {
+
+							messageRequest.state.sellPrice = parseFloat(messageRequest.state.price) 
+													+ margin(messageRequest.state.price) 
+													+ parseFloat(feeCost(messageRequest.state.price))
+						}
+
+						if(messageRequest.state.price <= messageRequest.state.buyPrice || messageRequest.state.buyPrice == 0) {
+	
+							messageRequest.state.buyPrice = parseFloat(messageRequest.state.price) 
+													- margin(messageRequest.state.price)
+													- parseFloat(feeCost(messageRequest.state.price))
+						}
+
+						messageRequest.state.tokenQuantity = parseFloat(messageRequest.state.tokenQuantity) + parseFloat(400000)
+
+						messageRequest.state.coinBalance = parseFloat(messageRequest.state.coinBalance) - parseFloat(400000)*parseFloat(messageRequest.state.price)
+						
+						messageRequest.state.tokenBalance = parseFloat(messageRequest.state.tokenBalance) + parseFloat(400000)
+
+						messageRequest.state.buyTotal =  messageRequest.state.buyTotal + 400000
+												
+						print()
+						
+						console.log("Buy order completed")
+
+						console.log("\n")
+						
+					}
+				}
+		}
+
+		const sellTokenFunc = () => {
+						
+			if(messageRequest.state.tokenBalance > messageRequest.state.sellTotal) {
+				
+				if(messageRequest.state.price >= messageRequest.state.sellPrice) {
+
+					console.log("Sell order")
+
+					if(messageRequest.state.buyPrice == 0) {
+
+						messageRequest.state.buyPrice = messageRequest.state.price
+					}
+
+					if(messageRequest.state.price <= messageRequest.state.buyPrice) {
+
+						messageRequest.state.buyPrice = parseFloat(messageRequest.state.price) 
+												- margin(messageRequest.state.price)
+												- parseFloat(feeCost(messageRequest.state.price))							
+					}
+
+					if(messageRequest.state.price > messageRequest.state.sellPrice) {
+
+						messageRequest.state.sellPrice = parseFloat(messageRequest.state.price) 
+											+ margin(messageRequest.state.price) 
+											+ parseFloat(feeCost(messageRequest.state.price))
+					}
+												 
+				
+					messageRequest.state.tokenQuantity = parseFloat(messageRequest.state.tokenQuantity) - parseFloat(400000)
+
+					messageRequest.state.buyQuantity = parseFloat(messageRequest.state.buyQuantity) + parseFloat(400000)
+
+
+					messageRequest.state.coinBalance = parseFloat(messageRequest.state.coinBalance) + parseFloat(400000)*parseFloat(messageRequest.state.price)
+
+					
+					messageRequest.state.tokenBalance = parseFloat(messageRequest.state.tokenBalance) - parseFloat(400000)
+					
+					messageRequest.state.sellTotal =  messageRequest.state.sellTotal + 400000
+
+					const sellQuantity = 400000
+
+					print()
+
+					console.log("Sell order completed")
+					
+					console.log("\n")
+				}
+			}
+		}
+					
+
+		var url = "https://www.binance.com/api/v3/ticker/price?symbol="+String(pair)
+		
+		axios.get(url)
+
+			.then(function(response) {
+
+				const price = parseFloat(response.data.price).toFixed(8)
+				messageRequest.state.lastPrice = messageRequest.state.price
+				messageRequest.state.price = price
+				movingAverage(price)
+
+				//messageRequest.state.buyPrice = price - margin(price)
+				//messageRequest.state.sellPrice = price + margin(price)
+				
+				
+				
+				
+							
+				if((messageRequest.state.price - messageRequest.state.lastPrice) > 0) {
+					
+					messageRequest.state.upCount++
+					document.getElementById("p3").innerHTML = "Up count: 	" +messageRequest.state.upCount
+				}
+
+				if ((messageRequest.state.lastPrice - messageRequest.state.price) > 0) { 
+
+					messageRequest.state.downCount++
+					document.getElementById("p4").innerHTML = "Down count: 	" +messageRequest.state.downCount
+				}
+
+				if (messageRequest.state.upCount > messageRequest.state.downCount) {
+					
+					document.getElementById("p3").style.backgroundColor = "green"
+					//document.getElementById("p43").style.backgroundColor = "black"
+					document.getElementById("p43").style.color = "green"
+				}
+				else{
+					document.getElementById("p3").style.backgroundColor = "white"
+					document.getElementById("p43").style.backgroundColor = "white"
+					document.getElementById("p43").style.color = "red"
+				}				
+
+				if(messageRequest.state.upCount < messageRequest.state.downCount) {
+
+					document.getElementById("p4").style.backgroundColor = "red"
+					document.getElementById("p42").style.backgroundColor = "green"
+				}
+				else{
+					document.getElementById("p4").style.backgroundColor = "white"
+					document.getElementById("p42").style.backgroundColor = "white"
+				}
+					
+				if(messageRequest.state.upCount < messageRequest.state.downCount) {
+						
+						console.log("Send buy order")
+						buyTokenFunc()
+					}
+				
+				if(messageRequest.state.upCount > messageRequest.state.downCount) {
+						
+						console.log("Send sell order")
+						sellTokenFunc()
+				}
+
+			messageRequest()
+				
+			}) .catch(err => {
+				console.log("Trader has an error see below")
+				console.log(err)
+			})
+}
+
+const onClickButton = () => {
+	
+	messageRequest.state.pair = document.getElementById("inp1").value
+	axiosGet(messageRequest.state.pair)
+}
+
+
+var interval
+const startClicker = () => {
+	
+	console.log("START")
+	interval = setInterval(onClickButton,1000)
+	
+}
+
+const stopClicker = () => {
+	
+	console.log("STOP")
+	clearInterval(interval)
+}
+
+</script>
+
+	</body>
+</html>
+
+<!-- https://api.twitter.com/2/tweets/search/recent?query=coffee&tweet.fields=public_metrics ->
+

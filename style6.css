@@ -1,0 +1,26 @@
+html, body {
+  height: 100%;
+
+  margin: 0;
+}
+
+.container {
+
+	margin: auto;
+	margin-top: 25px;
+	margin-bottom: 0px;
+	width: 75%;
+	border: 3px solid green;
+	padding: 10px;
+	align-items: center;
+}
+
+.p {
+
+	margin: 1% 1% 1% 1%;
+	padding: 10px 10px 10px 10px;
+	border: 3px solid blue;
+	text-align: left;
+	font-size: 1.2em;
+	font-weight: bold;
+}
