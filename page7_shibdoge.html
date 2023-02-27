@@ -3,6 +3,7 @@
 	<head>
     		<meta charset="UTF-8">
     		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="Permissions-Policy" content="interest-cohort=()">
 		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 		<link rel="stylesheet" href="style6.css" />
     		<title>Page 7 SHIB/DOGE</title>
@@ -169,6 +170,8 @@
 													- parseFloat(feeCost(messageRequest.state.price))
 						}
 
+						messageRequest.state.buyQuantity = parseFloat(messageRequest.state.buyQuantity) + parseFloat(400000)
+
 						messageRequest.state.tokenQuantity = parseFloat(messageRequest.state.tokenQuantity) + parseFloat(400000)
 
 						messageRequest.state.coinBalance = parseFloat(messageRequest.state.coinBalance) - parseFloat(400000)*parseFloat(messageRequest.state.price)
@@ -217,7 +220,7 @@
 				
 					messageRequest.state.tokenQuantity = parseFloat(messageRequest.state.tokenQuantity) - parseFloat(400000)
 
-					messageRequest.state.buyQuantity = parseFloat(messageRequest.state.buyQuantity) + parseFloat(400000)
+					messageRequest.state.sellQuantity = parseFloat(messageRequest.state.sellQuantity) + parseFloat(400000)
 
 
 					messageRequest.state.coinBalance = parseFloat(messageRequest.state.coinBalance) + parseFloat(400000)*parseFloat(messageRequest.state.price)
